@@ -1,0 +1,6 @@
+ALGORITHM = "infintie"
+SEED = 93812
+N = 128
+{ T = 0.9 }
+{ T = 1.0 }
+{ T = 1.1 }
