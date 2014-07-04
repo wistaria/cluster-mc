@@ -1,24 +1,11 @@
 /*****************************************************************************
 *
-* ALPS/looper: multi-cluster quantum Monte Carlo algorithms for spin systems
+* Cluster-MC: Cluster Algorithm Monte Carlo Methods
 *
 * Copyright (C) 1997-2011 by Synge Todo <wistaria@comp-phys.org>
 *
-* This software is published under the ALPS Application License; you
-* can use, redistribute it and/or modify it under the terms of the
-* license, either version 1 or (at your option) any later version.
-* 
-* You should have received a copy of the ALPS Application License
-* along with this software; see the file LICENSE. If not, the license
-* is also available from http://alps.comp-phys.org/.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-* FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT 
-* SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE 
-* FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE, 
-* ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-* DEALINGS IN THE SOFTWARE.
+* Distributed under the Boost Software License, Version 1.0. (See accompanying
+* file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 *
 *****************************************************************************/
 
@@ -28,17 +15,17 @@
 //   `The Art of Computer Programming, Vol. 1, Fundamental Algorithms'
 //   3rd edition (Addison Wesley, Reading, 1997) Sec 2.3.3.
 
-#ifndef LOOPER_UNION_FIND_H
-#define LOOPER_UNION_FIND_H
+#ifndef CLUSTER_UNION_FIND_H
+#define CLUSTER_UNION_FIND_H
 
 #ifndef ALPS_INDEP_SOURCE
 # include <alps/config.h>
-# if defined(LOOPER_ENABLE_OPENMP) && defined(ALPS_ENABLE_OPENMP_WORKER) && !defined(LOOPER_OPENMP)
-#  define LOOPER_OPENMP
+# if defined(CLUSTER_ENABLE_OPENMP) && defined(ALPS_ENABLE_OPENMP_WORKER) && !defined(CLUSTER_OPENMP)
+#  define CLUSTER_OPENMP
 # endif
 #else
-# if defined(LOOPER_ENABLE_OPENMP) && defined(_OPENMP) && !defined(LOOPER_OPENMP)
-#  define LOOPER_OPENMP
+# if defined(CLUSTER_ENABLE_OPENMP) && defined(_OPENMP) && !defined(CLUSTER_OPENMP)
+#  define CLUSTER_OPENMP
 # endif
 #endif
 
@@ -46,12 +33,12 @@
 #include <vector>
 #include <iostream>
 
-#ifdef LOOPER_OPENMP
+#ifdef CLUSTER_OPENMP
 # include <omp.h>
 # include "atomic.h"
 #endif
 
-namespace looper {
+namespace cluster {
 namespace union_find {
 
 class node {
@@ -65,7 +52,7 @@ public:
   int weight() const { return -parent_; }
   void set_id(int id) { id_ = id; }
   int id() const { return id_; }
-#ifdef LOOPER_OPENMP
+#ifdef CLUSTER_OPENMP
   int lock_root() {
     int p = parent_;
     if (p < 0 && compare_and_swap(parent_, p, 0)) {
@@ -92,7 +79,7 @@ public:
   int weight() const { return parent_ ^ id_mask; }
   void set_id(int id) { parent_ = id ^ id_mask; }
   int id() const { return parent_ ^ id_mask; }
-#ifdef LOOPER_OPENMP
+#ifdef CLUSTER_OPENMP
   int lock_root() {
     int p = parent_;
     if (p < 0 && compare_and_swap(parent_, p, 0)) {
@@ -119,7 +106,7 @@ public:
   int weight() const { return 0; } // dummy
   void set_id(int id) { parent_ = id ^ id_mask; }
   int id() const { return parent_ ^ id_mask; }
-#ifdef LOOPER_OPENMP
+#ifdef CLUSTER_OPENMP
   int lock_root() {
     int p = parent_;
     if (p < 0 && compare_and_swap(parent_, p, 0)) {
@@ -144,7 +131,7 @@ inline int add(std::vector<T>& v) {
 
 template<class T>
 inline int root_index(std::vector<T> const& v, int g) {
-#ifdef LOOPER_OPENMP
+#ifdef CLUSTER_OPENMP
   T c = v[g];
   while (!c.is_root()) {
     g = c.parent();
@@ -187,7 +174,7 @@ inline int cluster_id(std::vector<T> const& v, T const& n) { return root(v, n).i
 
 template<class T>
 void set_root(std::vector<T>& v, int g) {
-#ifdef LOOPER_OPENMP
+#ifdef CLUSTER_OPENMP
   while(true) {
     int r = root_index(v, g);
     if (r == g) {
@@ -226,7 +213,7 @@ inline int unify_compress(std::vector<T>& v, int g0, int g1) {
   int r0 = root_index(v, g0);
   int r1 = root_index(v, g1);
   if (r0 != r1) {
-#if !defined(LOOPER_USE_DETERMINISTIC_UNIFY)
+#if !defined(CLUSTER_USE_DETERMINISTIC_UNIFY)
     if (v[r0].weight() < v[r1].weight()) swap(r0, r1);
 #else
     if (r0 > r1) swap(r0, r1);
@@ -244,7 +231,7 @@ inline int unify_pathhalving(std::vector<T>& v, int g0, int g1) {
   using std::swap;
   int r0 = root_index_ph(v, g0);
   int r1 = root_index_ph(v, g1);
-#ifdef LOOPER_OPENMP
+#ifdef CLUSTER_OPENMP
   int w0 = 0;
   int w1 = 0;
   while (true) {
@@ -257,7 +244,7 @@ inline int unify_pathhalving(std::vector<T>& v, int g0, int g1) {
     r0 = root_index_ph(v, r0);
     r1 = root_index_ph(v, r1);
   }
-# if !defined(LOOPER_USE_DETERMINISTIC_UNIFY)
+# if !defined(CLUSTER_USE_DETERMINISTIC_UNIFY)
   if (w0 < w1) swap(r0, r1);
 # else
   if (r0 > r1) swap(r0, r1);
@@ -266,7 +253,7 @@ inline int unify_pathhalving(std::vector<T>& v, int g0, int g1) {
   v[r1].set_parent(r0); // release lock
 #else
   if (r0 != r1) {
-# if !defined(LOOPER_USE_DETERMINISTIC_UNIFY)
+# if !defined(CLUSTER_USE_DETERMINISTIC_UNIFY)
     if (v[r0].weight() < v[r1].weight()) swap(r0, r1);
 # else
     if (r0 > r1) swap(r0, r1);
@@ -351,7 +338,7 @@ void copy_id_p(std::vector<T>& v, int start, int n) {
 
 template<typename T>
 inline void pack_tree(std::vector<T>& v, int n) {
-#ifdef LOOPER_OPENMP
+#ifdef CLUSTER_OPENMP
   int g, w; // workaround for FCC OpenMP bug? -- ST 2010-11-22
   #pragma omp parallel for schedule(static) private(g, w)
   for (int i = 0; i < n; ++i) {
@@ -402,7 +389,7 @@ inline void pack_tree(std::vector<T>& v, int n) {
 // pack tree so that nodes with id [0...n) and [m...) come upper
 template<typename T>
 inline void pack_tree(std::vector<T>& v, int n, int m) {
-#ifdef LOOPER_OPENMP
+#ifdef CLUSTER_OPENMP
   int g, w; // workaround for FCC OpenMP bug? -- ST 2010-11-22
   #pragma omp parallel for schedule(static) private(g, w)
   for (int i = 0; i < n; ++i) {
@@ -493,6 +480,6 @@ inline void pack_tree(std::vector<T>& v, int n, int m) {
 }
 
 } // end namespace union_find
-} // end namespace looper
+} // end namespace cluster
 
 #endif
