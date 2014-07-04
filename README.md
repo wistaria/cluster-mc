@@ -34,6 +34,13 @@ Algorithms
 
 * infinite: O(N) Swendsen-Wang Cluster Algorithm for Infinite Ragnge Ising Model
 
+Release Note
+------------
+
+* Release 0.1 (2014/07/05)
+    * initial version
+    * infinite: O(N) Swendsen-Wang Cluster Algorithm for Infinite Ragnge Ising Model
+ 
 References
 ----------
 
