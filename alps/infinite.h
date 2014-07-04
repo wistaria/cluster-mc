@@ -27,7 +27,7 @@ private:
 
 public:
   infinite_worker(alps::Parameters const& params) :
-    super_type(params), T(params["T"]), N(params["N"]),
+    super_type(params), T(alps::evaluate("T", params)), N(alps::evaluate("N", params)),
     r_time(engine(), boost::exponential_distribution<>(N / T)),
     mcs(params), spins(N, 1), fragments(N), to_flip(N) {
   }
