@@ -27,7 +27,7 @@ Directories
 
 * standalone: contains standalone applications
 
-* loop: contains common header files
+* cluster: contains common header files
 
 Algorithms
 ----------
