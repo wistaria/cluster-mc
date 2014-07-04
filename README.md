@@ -14,6 +14,11 @@ Install
     * BUILD_ALPS_APPLICATIONS: (default ON)
     * BUILD_STANDALONE_APPLICATIONS: (default ON)
 
+* Configure & make
+
+  cmake -DALPS_ROOT_DIR /where_to_alps
+  make
+
 Directories
 -----------
 
