@@ -11,8 +11,8 @@
 
 // O(N) Swendsen-Wang Cluster Algorithm for Infinite Range Ising Model
 
-#include "infinite.h"
 #include <alps/parapack/parapack.h>
+#include "infinite.hpp"
 
 int main(int argc, char** argv) { return alps::parapack::start(argc, argv); }
 

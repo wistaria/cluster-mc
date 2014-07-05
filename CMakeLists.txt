@@ -19,7 +19,17 @@ if((ALPS_ROOT_DIR OR ALPS_HOME_ENV) AND BUILD_ALPS_APPLICATIONS)
     NO_SYSTEM_ENVIRONMENT_PATH)
   message(STATUS "Found ALPS: ${ALPS_ROOT_DIR} (revision: ${ALPS_VERSION})")
   include(${ALPS_USE_FILE})
+else((ALPS_ROOT_DIR OR ALPS_HOME_ENV) AND BUILD_ALPS_APPLICATIONS)
+  list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/config)
+  find_package(BoostSrc)
+  include_directories(${Boost_ROOT_DIR})
+  include(add_alps_test)
 endif((ALPS_ROOT_DIR OR ALPS_HOME_ENV) AND BUILD_ALPS_APPLICATIONS)
+
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Type of build" FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
+message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
 # enable C and C++ compilers
 enable_language(C CXX)
@@ -30,7 +40,7 @@ include(CTest)
 include_directories(${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR})
 
 if(BUILD_STANDALONE_APPLICATIONS)
-  # add_subdirectory(standalone)
+  add_subdirectory(standalone)
 endif(BUILD_STANDALONE_APPLICATIONS)
 
 if(BUILD_ALPS_APPLICATIONS AND ALPS_LIBRARIES)

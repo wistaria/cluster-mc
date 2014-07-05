@@ -7,7 +7,8 @@
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
 
+add_definitions(-DALPS_INDEP_SOURCE)
+
 # O(N) Swendsen-Wang Algorithm for Infinite Range Ising Model
-add_executable(infinite infinite.cpp)
-target_link_libraries(infinite ${ALPS_LIBRARIES})
-add_alps_test(infinite)
+add_executable(infinite_sa infinite_sa.cpp)
+add_alps_test(infinite_sa)

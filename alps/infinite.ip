@@ -1,4 +1,4 @@
-ALGORITHM = "infintie"
+ALGORITHM = "infinite"
 SEED = 93812
 N = 128
 { T = 0.9 }

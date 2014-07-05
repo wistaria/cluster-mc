@@ -1,5 +1,5 @@
 [input parameters]
-ALGORITHM = infintie;
+ALGORITHM = infinite;
 SEED = 93812;
 N = 128;
 T = 0.9;
@@ -7,8 +7,6 @@ DIR_NAME = .;
 BASE_NAME = task1;
 WORKER_SEED = 93812;
 DISORDER_SEED = 93812;
-Warning: unknown algorithm: "infintie".  The only algorithm "infinite" will be used instead.
-Warning: unknown evaluator: "infintie".  The only evaluator "infinite" will be used instead.
 [results]
 Binder Ratio of Magnetization: 0.681845 +/- 0.00202
 Binder Ratio of Magnetization (unimproved): 0.682991 +/- 0.00253
@@ -79,7 +77,7 @@ Number of Clusters: 49.0303 +/- 0.0843; tau = 2.01
     bin #9   : 256      entries: error = 0.0796162
     bin #10  : 128      entries: error = 0.0843468
 [input parameters]
-ALGORITHM = infintie;
+ALGORITHM = infinite;
 SEED = 93812;
 N = 128;
 T = 1.0;
@@ -87,8 +85,6 @@ DIR_NAME = .;
 BASE_NAME = task2;
 WORKER_SEED = 93812;
 DISORDER_SEED = 93812;
-Warning: unknown algorithm: "infintie".  The only algorithm "infinite" will be used instead.
-Warning: unknown evaluator: "infintie".  The only evaluator "infinite" will be used instead.
 [results]
 Binder Ratio of Magnetization: 0.476614 +/- 0.00138
 Binder Ratio of Magnetization (unimproved): 0.477913 +/- 0.00225
@@ -159,7 +155,7 @@ Number of Clusters: 61.2774 +/- 0.0502; tau = 0.56
     bin #9   : 256      entries: error = 0.0547809
     bin #10  : 128      entries: error = 0.0501869
 [input parameters]
-ALGORITHM = infintie;
+ALGORITHM = infinite;
 SEED = 93812;
 N = 128;
 T = 1.1;
@@ -167,8 +163,6 @@ DIR_NAME = .;
 BASE_NAME = task3;
 WORKER_SEED = 93812;
 DISORDER_SEED = 93812;
-Warning: unknown algorithm: "infintie".  The only algorithm "infinite" will be used instead.
-Warning: unknown evaluator: "infintie".  The only evaluator "infinite" will be used instead.
 [results]
 Binder Ratio of Magnetization: 0.401449 +/- 0.000755 WARNING: check error convergence
 Binder Ratio of Magnetization (unimproved): 0.404028 +/- 0.00194

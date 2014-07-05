@@ -1,0 +1,10 @@
+O(N) Swendsen-Wang Cluster Algorithm for Infinite Range Ising Model
+Seed of RNG            = 29833
+Number of Sites        = 128
+Temperature            = 1
+MCS for Thermalization = 8192
+MCS for Measurement    = 65536
+Number of Clusters = 61.3065 +- 0.0344294
+Magnetization^2 = 1655.02 +- 5.09836
+Magnetization^4 = 5.7567e+06 +- 30952.9
+Binder Ratio of Magnetization = 0.475808
