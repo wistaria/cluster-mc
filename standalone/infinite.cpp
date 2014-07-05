@@ -11,6 +11,8 @@
 
 // O(N) Swendsen-Wang Cluster Algorithm for Infinite Range Ising Model
 
+#define ALPS_INDEP_SOURCE
+
 #include <boost/random.hpp>
 #include <boost/timer.hpp>
 #include <algorithm>
@@ -22,8 +24,6 @@
 
 using cluster::power2;
 using cluster::power4;
-
-typedef cluster::union_find::node fragment_t;
 
 int main(int argc, char* argv[]) {
   std::cout << "O(N) Swendsen-Wang Cluster Algorithm for Infinite Range Ising Model\n";
@@ -39,11 +39,16 @@ int main(int argc, char* argv[]) {
     uniform_01(eng, boost::uniform_real<>());
   boost::variate_generator<boost::mt19937&, boost::exponential_distribution<> >
     r_time(eng, boost::exponential_distribution<>(num_sites / temperature));
-  
+
+  // spin configuration
   std::vector<int> spins(num_sites, 1);
+
+  // cluster information
+  typedef cluster::union_find::node fragment_t;
   std::vector<fragment_t> fragments(num_sites);
   std::vector<bool> to_flip(num_sites);
-      
+
+  // observables
   cluster::observable num_clusters, magnetization2, magnetization4;
 
   boost::timer tm;
@@ -77,7 +82,6 @@ int main(int argc, char* argv[]) {
       if (to_flip[fragments[s].id()]) spins[s] ^= 1;
     }
     
-    // measurements
     if (mcs >= therm) {
       num_clusters << (double)nc;
       magnetization2 << mag2;
@@ -85,8 +89,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  std::cerr << "Speed = " << (therm + sweeps) / tm.elapsed()
-            << " MCS/sec\n";
+  std::cerr << "Speed = " << (therm + sweeps) / tm.elapsed() << " MCS/sec\n";
   std::cout << "Number of Clusters = "
             << num_clusters.mean() << " +- " << num_clusters.error() << std::endl
             << "Magnetization^2 = "
