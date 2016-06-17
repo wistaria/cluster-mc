@@ -11,3 +11,8 @@
 add_executable(infinite infinite.cpp)
 target_link_libraries(infinite ${ALPS_LIBRARIES})
 add_alps_test(infinite)
+
+# Swendsen-Wang Algorithm for Potts Model
+add_executable(potts potts.cpp)
+target_link_libraries(potts ${ALPS_LIBRARIES})
+add_alps_test(potts)

@@ -1,0 +1,83 @@
+[input parameters]
+ALGORITHM = potts;
+SEED = 93812;
+Q = 3;
+LATTICE = "square lattice";
+L = 8;
+T = 0.994973;
+DIR_NAME = .;
+BASE_NAME = task1;
+WORKER_SEED = 93812;
+DISORDER_SEED = 93812;
+[results]
+Binder Ratio of Order Parameter: 0.88264 +/- 0.00197
+Energy: 106.175 +/- 0.158; tau = 4.88
+    bin #1   : 65536    entries: error = 0.0480412
+    bin #2   : 32768    entries: error = 0.0650804
+    bin #3   : 16384    entries: error = 0.0866657
+    bin #4   : 8192     entries: error = 0.1107
+    bin #5   : 4096     entries: error = 0.132988
+    bin #6   : 2048     entries: error = 0.146713
+    bin #7   : 1024     entries: error = 0.159037
+    bin #8   : 512      entries: error = 0.163715
+    bin #9   : 256      entries: error = 0.169937
+    bin #10  : 128      entries: error = 0.157551
+Energy Density: 1.65898 +/- 0.00246; tau = 4.88
+    bin #1   : 65536    entries: error = 0.000750644
+    bin #2   : 32768    entries: error = 0.00101688
+    bin #3   : 16384    entries: error = 0.00135415
+    bin #4   : 8192     entries: error = 0.00172969
+    bin #5   : 4096     entries: error = 0.00207794
+    bin #6   : 2048     entries: error = 0.00229239
+    bin #7   : 1024     entries: error = 0.00248495
+    bin #8   : 512      entries: error = 0.00255805
+    bin #9   : 256      entries: error = 0.00265527
+    bin #10  : 128      entries: error = 0.00246173
+Energy^2: 11424.3 +/- 32.2; tau = 4.76
+    bin #1   : 65536    entries: error = 9.92719
+    bin #2   : 32768    entries: error = 13.4397
+    bin #3   : 16384    entries: error = 17.8805
+    bin #4   : 8192     entries: error = 22.8194
+    bin #5   : 4096     entries: error = 27.3763
+    bin #6   : 2048     entries: error = 30.1543
+    bin #7   : 1024     entries: error = 32.6341
+    bin #8   : 512      entries: error = 33.471
+    bin #9   : 256      entries: error = 34.7329
+    bin #10  : 128      entries: error = 32.2014
+Inverse Temperature: 1.00505 +/- 0
+Number of Clusters: 8.94406 +/- 0.0549; tau = 4.55
+    bin #1   : 65536    entries: error = 0.0172554
+    bin #2   : 32768    entries: error = 0.0230181
+    bin #3   : 16384    entries: error = 0.0302778
+    bin #4   : 8192     entries: error = 0.0383452
+    bin #5   : 4096     entries: error = 0.0459084
+    bin #6   : 2048     entries: error = 0.0507596
+    bin #7   : 1024     entries: error = 0.0550125
+    bin #8   : 512      entries: error = 0.0568056
+    bin #9   : 256      entries: error = 0.058541
+    bin #10  : 128      entries: error = 0.0548591
+Number of Sites: 64 +/- 0
+Order Parameter Density^2: 2669.19 +/- 11.2; tau = 4.77
+    bin #1   : 65536    entries: error = 3.46489
+    bin #2   : 32768    entries: error = 4.69301
+    bin #3   : 16384    entries: error = 6.26118
+    bin #4   : 8192     entries: error = 7.99984
+    bin #5   : 4096     entries: error = 9.61173
+    bin #6   : 2048     entries: error = 10.6129
+    bin #7   : 1024     entries: error = 11.4644
+    bin #8   : 512      entries: error = 11.7924
+    bin #9   : 256      entries: error = 12.242
+    bin #10  : 128      entries: error = 11.2479
+Order Parameter Density^4: 8.07183e+06 +/- 5.18e+04; tau = 4.59
+    bin #1   : 65536    entries: error = 16230.6
+    bin #2   : 32768    entries: error = 21940.9
+    bin #3   : 16384    entries: error = 29202.8
+    bin #4   : 8192     entries: error = 37232.7
+    bin #5   : 4096     entries: error = 44562.7
+    bin #6   : 2048     entries: error = 49111.2
+    bin #7   : 1024     entries: error = 52983.4
+    bin #8   : 512      entries: error = 54142.5
+    bin #9   : 256      entries: error = 56205
+    bin #10  : 128      entries: error = 51810.7
+Specific Heat: 2.38761 +/- 0.0309
+Temperature: 0.994973 +/- 0
