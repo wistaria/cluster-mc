@@ -7,7 +7,10 @@
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
 
-foreach(name infinite percolation_bond percolation_site potts)
-  add_executable(${name}_sa ${name}.cpp)
-  add_alps_test(${name}_sa)
+set(PROGS infinite percolation_bond percolation_site potts)
+foreach(name ${PROGS})
+  set(target_name ${name}_standalone)
+  add_executable(${target_name} ${name}.cpp)
+  set_target_properties(${target_name} PROPERTIES OUTPUT_NAME ${name})
+  add_alps_test(${name})
 endforeach(name)

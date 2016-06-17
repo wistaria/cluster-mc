@@ -11,7 +11,7 @@ Copyright (C) 1997-2016 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
     * BUILD_ALPS_APPLICATIONS: (default ON)
     * BUILD_STANDALONE_APPLICATIONS: (default ON)
 * Configure & make  
-     cmake -DALPS_ROOT_DIR /where_to_alps  
+     cmake -DALPS_ROOT_DIR /where_to_alps .
      make
 
 ## Directories
