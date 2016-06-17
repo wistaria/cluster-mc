@@ -5,4 +5,4 @@ Occupation Probability = 0.5
 Monte Carlo Steps      = 256
 Number of Clusters = 6431.11 +- 6.70384
 Strength of Largest Cluster = 0.556871 +- 0.00711514
-Average Cluster Size = 513.349 +- 57.6824
+Cluster Size = 513.349 +- 57.6824

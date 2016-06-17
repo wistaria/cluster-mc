@@ -13,12 +13,14 @@
 #include <iostream>
 
 struct options {
-  unsigned int seed, num_sites;
+  unsigned int seed, q, length;
   double temperature;
   unsigned int sweeps, therm;
   bool valid;
+
   options(unsigned int argc, char *argv[], bool print = true) :
-    seed(29833), num_sites(128), temperature(1.0), sweeps(1 << 16), therm(sweeps >> 3),
+    // default parameters
+    seed(29833), length(8), temperature(2.27), sweeps(1 << 16), therm(sweeps >> 3),
     valid(true) {
     for (unsigned int i = 1; i < argc; ++i) {
       switch (argv[i][0]) {
@@ -27,9 +29,9 @@ struct options {
         case 's' :
           if (++i == argc) { usage(print); return; }
           seed = boost::lexical_cast<unsigned int>(argv[i]); break;
-        case 'n' :
+        case 'l' :
           if (++i == argc) { usage(print); return; }
-          num_sites = boost::lexical_cast<unsigned int>(argv[i]); break;
+          length = boost::lexical_cast<unsigned int>(argv[i]); break;
         case 't' :
           if (++i == argc) { usage(print); return; }
           temperature = boost::lexical_cast<double>(argv[i]); break;
@@ -47,12 +49,12 @@ struct options {
         usage(print); return;
       }
     }
-    if (num_sites == 0 || temperature <= 0 || sweeps == 0) {
+    if (length == 0 || temperature <= 0. || sweeps == 0) {
       std::cerr << "invalid parameter(s)\n"; usage(print); return;
     }
     if (print) {
       std::cout << "Seed of RNG            = " << seed << std::endl
-                << "Number of Sites        = " << num_sites << std::endl
+                << "System Linear Size     = " << length << std::endl
                 << "Temperature            = " << temperature << std::endl
                 << "MCS for Thermalization = " << therm << std::endl
                 << "MCS for Measurement    = " << sweeps << std::endl;
@@ -62,10 +64,10 @@ struct options {
     if (print)
       os << "[command line options]\n"
          << "  -s int    Seed of RNG\n"
-         << "  -n int    Number of Sites\n"
+         << "  -l int    System Linear Size\n"
          << "  -t double Temperature\n"
          << "  -m int    MCS for Measurement\n"
-         << "  -h        this help\n\n";
+         << "  -h        this help\n";
     valid = false;
   }
 };

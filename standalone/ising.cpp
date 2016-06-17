@@ -9,7 +9,7 @@
 *
 *****************************************************************************/
 
-// Swendsen-Wang Cluster Algorithm for Square-Lattice Potts Model
+// Swendsen-Wang Cluster Algorithm for Square-Lattice Ising Model
 
 #define ALPS_INDEP_SOURCE
 
@@ -24,7 +24,7 @@
 #include <cluster/power.hpp>
 #include <cluster/union_find.hpp>
 #include <cluster/square_lattice.hpp>
-#include "potts_options.hpp"
+#include "ising_options.hpp"
 
 using cluster::power2;
 using cluster::power4;
@@ -33,8 +33,7 @@ int main(int argc, char* argv[]) {
   std::cout << "Swendsen-Wang Cluster Algorithm for Square Lattice Potts Model\n";
   options p(argc, argv);
   if (!p.valid) std::exit(127);
-  unsigned int q = p.q;
-  double prob = 1 - std::exp(-1 / p.temperature);
+  double prob = 1 - std::exp(-2 / p.temperature);
 
   // square lattice
   cluster::square_lattice lattice(p.length);
@@ -45,7 +44,7 @@ int main(int argc, char* argv[]) {
     uniform_01(eng, boost::uniform_real<>());
 
   // spin configuration
-  std::vector<int> spins(lattice.num_sites(), 0 /* all zero state */);
+  std::vector<int> spins(lattice.num_sites(), 1);
 
   // cluster information
   typedef cluster::union_find::node fragment_t;
@@ -54,7 +53,10 @@ int main(int argc, char* argv[]) {
 
   // observables
   cluster::observable num_clusters("Number of Clusters"), energy("Energy Density"),
-    magnetization2("Order Parameter^2"), magnetization4("Order Parameter^4");
+    magnetization_unimp("Magnetization (unimproved)"),
+    magnetization2_unimp("Magnetization^2 (unimproved)"),
+    magnetization4_unimp("Magnetization^4 (unimproved)"),
+    magnetization2("Magnetization^2"), magnetization4("Magnetization^4");
 
   boost::timer tm;
   for (unsigned int mcs = 0; mcs < p.therm + p.sweeps; ++mcs) {
@@ -81,21 +83,25 @@ int main(int argc, char* argv[]) {
     BOOST_FOREACH(fragment_t& f, fragments) f.set_id(cluster_id(fragments, f));
 
     // flip spins
-    for (int c = 0; c < nc; ++c) flip[c] = static_cast<int>(q * uniform_01());
+    for (int c = 0; c < nc; ++c) flip[c] = (uniform_01() < 0.5);
     for (int s = 0; s < lattice.num_sites(); ++s)
-      spins[s] = (spins[s] + flip[fragments[s].id()]) % q;
+      if (flip[fragments[s].id()]) spins[s] ^= 1;
 
     double ene = 0;
     for (int b = 0; b < lattice.num_bonds(); ++b) {
       ene -= (spins[lattice.source(b)] == spins[lattice.target(b)] ? 1.0 : 0.0);
     }
+    double mu = 0;
+    for (int s = 0; s < lattice.num_sites(); ++s) mu += 2 * spins[s] - 1;
 
     if (mcs >= p.therm) {
       num_clusters << (double)nc;
       energy << ene / lattice.num_sites();
+      magnetization_unimp << mu;
+      magnetization2_unimp << power2(mu);
+      magnetization4_unimp << power4(mu);
       magnetization2 << mag2;
-      double fc = 2.0 / (q - 1);
-      magnetization4 << ((1+fc) * power2(mag2) - fc * mag4);
+      magnetization4 << (3 * power2(mag2) - 2 * mag4);
     }
   }
 
@@ -104,8 +110,11 @@ int main(int argc, char* argv[]) {
             << "Speed = " << (p.therm + p.sweeps) / elapsed << " MCS/sec\n";
   std::cout << num_clusters << std::endl
             << energy << std::endl
+            << magnetization_unimp << std::endl
+            << magnetization2_unimp << std::endl
+            << magnetization4_unimp << std::endl
             << magnetization2 << std::endl
             << magnetization4 << std::endl
-            << "Binder Ratio of Order Parameter = "
+            << "Binder Ratio of Magnetization = "
             << power2(magnetization2.mean()) / magnetization4.mean() << std::endl;
 }
