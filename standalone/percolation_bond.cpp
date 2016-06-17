@@ -2,7 +2,7 @@
 *
 * Cluster-MC: Cluster Algorithm Monte Carlo Methods
 *
-* Copyright (C) 1997-2014 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
+* Copyright (C) 1997-2016 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
 *
 * Distributed under the Boost Software License, Version 1.0. (See accompanying
 * file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -35,6 +35,8 @@ int main(int argc, char* argv[]) {
 
   // sqaure lattice
   cluster::square_lattice lattice(p.length);
+  unsigned int num_sites = lattice.num_sites();
+  unsigned int num_bonds = lattice.num_bonds();
 
   // random number generators
   boost::mt19937 eng(p.seed);
@@ -43,7 +45,7 @@ int main(int argc, char* argv[]) {
 
   // cluster information
   typedef cluster::union_find::node fragment_t;
-  std::vector<fragment_t> fragments(lattice.num_sites());
+  std::vector<fragment_t> fragments(num_sites);
 
   // observables
   cluster::observable num_clusters, strength, cluster_size;
@@ -54,25 +56,27 @@ int main(int argc, char* argv[]) {
     std::fill(fragments.begin(), fragments.end(), fragment_t());
 
     // cluster generation
-    for (int b = 0; b < lattice.num_bonds(); ++b)
+    for (int b = 0; b < num_bonds; ++b)
       if (uniform_01() < probability) unify(fragments, lattice.source(b), lattice.target(b));
 
-    // count the number of clusters
+    // assign cluster id & accumulate cluster properties
     int nc = 0;
-    double wmax = 0, m2 = 0;
+    double wmax = 0, mag2 = 0;
     for (int f = 0; f < fragments.size(); ++f)
       if (fragments[f].is_root()) {
         ++nc;
         double w = fragments[f].weight();
         wmax = std::max(wmax, w);
-        m2 += power2(w);
+        mag2 += power2(w);
       }
     num_clusters << (double)nc;
-    strength << wmax / lattice.num_sites();
-    cluster_size << (m2 - power2(wmax)) / lattice.num_sites();
+    strength << wmax / num_sites;
+    cluster_size << (mag2 - power2(wmax)) / num_sites;
   }
-  
-  std::cerr << "Speed = " << sweeps / tm.elapsed() << " MCS/sec\n";
+
+  double elapsed = tm.elapsed();
+  std::clog << "Elapsed time       = " << elapsed << " sec\n"
+            << "Speed = " << sweeps / elapsed << " MCS/sec\n";
   std::cout << "Number of Clusters = "
             << num_clusters.mean() << " +- " << num_clusters.error() << std::endl
             << "Strength of Largest Cluster = "

@@ -2,7 +2,7 @@
 *
 * Cluster-MC: Cluster Algorithm Monte Carlo Methods
 *
-* Copyright (C) 2014 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
+* Copyright (C) 2014-2016 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
 *
 * Distributed under the Boost Software License, Version 1.0. (See accompanying
 * file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -47,25 +47,25 @@ struct options {
         usage(print); return;
       }
     }
-    if (num_sites <= 0 || temperature <= 0 || sweeps <= 0) {
+    if (num_sites == 0 || temperature <= 0 || sweeps == 0) {
       std::cerr << "invalid parameter(s)\n"; usage(print); return;
     }
     if (print) {
-       std::cout << "Seed of RNG            = " << seed << std::endl
-                 << "Number of Sites        = " << num_sites << std::endl
-                 << "Temperature            = " << temperature << std::endl
-                 << "MCS for Thermalization = " << therm << std::endl
-                 << "MCS for Measurement    = " << sweeps << std::endl;;
-     }
-   }
-   void usage(bool print, std::ostream& os = std::cerr) {
-     if (print)
-       os << "[command line options]\n\n"
-          << "  -s int    Seed of RNG\n"
-          << "  -n int    Number of Sites\n"
-          << "  -t double Temperature\n"
-          << "  -m int    MCS for Measurement\n"
-          << "  -h        this help\n\n";
-     valid = false;
-   }
- };
+      std::cout << "Seed of RNG            = " << seed << std::endl
+                << "Number of Sites        = " << num_sites << std::endl
+                << "Temperature            = " << temperature << std::endl
+                << "MCS for Thermalization = " << therm << std::endl
+                << "MCS for Measurement    = " << sweeps << std::endl;
+    }
+  }
+  void usage(bool print, std::ostream& os = std::cerr) {
+    if (print)
+      os << "[command line options]\n"
+         << "  -s int    Seed of RNG\n"
+         << "  -n int    Number of Sites\n"
+         << "  -t double Temperature\n"
+         << "  -m int    MCS for Measurement\n"
+         << "  -h        this help\n\n";
+    valid = false;
+  }
+};

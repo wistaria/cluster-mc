@@ -2,7 +2,7 @@
 *
 * Cluster-MC: Cluster Algorithm Monte Carlo Methods
 *
-* Copyright (C) 1997-2014 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
+* Copyright (C) 1997-2016 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
 *
 * Distributed under the Boost Software License, Version 1.0. (See accompanying
 * file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -27,7 +27,7 @@
 using cluster::power2;
 
 int main(int argc, char* argv[]) {
-  std::cout << "Sond Percolation Problem on Square Lattice\n";
+  std::cout << "Site Percolation Problem on Square Lattice\n";
   options p(argc, argv, 0.592746);
   if (!p.valid) std::exit(127);
   double probability = p.probability;
@@ -35,16 +35,19 @@ int main(int argc, char* argv[]) {
 
   // sqaure lattice
   cluster::square_lattice lattice(p.length);
-  std::vector<bool> occupied(lattice.num_sites());
+  unsigned int num_sites = lattice.num_sites();
 
   // random number generators
   boost::mt19937 eng(p.seed);
   boost::variate_generator<boost::mt19937&, boost::uniform_real<> >
     uniform_01(eng, boost::uniform_real<>());
 
+  // configuration
+  std::vector<bool> occupied(num_sites);
+
   // cluster information
   typedef cluster::union_find::node fragment_t;
-  std::vector<fragment_t> fragments(lattice.num_sites());
+  std::vector<fragment_t> fragments(num_sites);
 
   // observables
   cluster::observable num_clusters, strength, cluster_size;
@@ -53,7 +56,7 @@ int main(int argc, char* argv[]) {
   for (unsigned int mcs = 0; mcs < sweeps; ++mcs) {
     // initialize cluster information
     std::fill(fragments.begin(), fragments.end(), fragment_t());
-    for (int s = 0; s < lattice.num_sites(); ++s) occupied[s] = (uniform_01() < probability);
+    for (int s = 0; s < num_sites; ++s) occupied[s] = (uniform_01() < probability);
 
     // cluster generation
     for (int b = 0; b < lattice.num_bonds(); ++b) {
@@ -62,22 +65,24 @@ int main(int argc, char* argv[]) {
       if (occupied[s0] && occupied[s1]) unify(fragments, s0, s1);
     }
 
-    // count the number of clusters
+    // assign cluster id & accumulate cluster properties
     int nc = 0;
-    double wmax = 0, m2 = 0;
+    double wmax = 0, mag2 = 0;
     for (int f = 0; f < fragments.size(); ++f)
       if (fragments[f].is_root()) {
         ++nc;
         double w = fragments[f].weight();
         wmax = std::max(wmax, w);
-        m2 += power2(w);
+        mag2 += power2(w);
       }
     num_clusters << (double)nc;
-    strength << wmax / lattice.num_sites();
-    cluster_size << (m2 - power2(wmax)) / lattice.num_sites();
+    strength << wmax / num_sites;
+    cluster_size << (mag2 - power2(wmax)) / num_sites;
   }
-  
-  std::cerr << "Speed = " << sweeps / tm.elapsed() << " MCS/sec\n";
+
+  double elapsed = tm.elapsed();
+  std::clog << "Elapsed time       = " << elapsed << " sec\n"
+            << "Speed = " << sweeps / elapsed << " MCS/sec\n";
   std::cout << "Number of Clusters = "
             << num_clusters.mean() << " +- " << num_clusters.error() << std::endl
             << "Strength of Largest Cluster = "
