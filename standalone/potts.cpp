@@ -39,7 +39,6 @@ int main(int argc, char* argv[]) {
 
   // sqaure lattice
   cluster::square_lattice lattice(p.length);
-  unsigned int num_sites = lattice.num_sites();
 
   // random number generators
   boost::mt19937 eng(p.seed);
@@ -47,12 +46,12 @@ int main(int argc, char* argv[]) {
     uniform_01(eng, boost::uniform_real<>());
 
   // spin configuration
-  std::vector<int> spins(num_sites, 0 /* all zero state */);
+  std::vector<int> spins(lattice.num_sites(), 0 /* all zero state */);
 
   // cluster information
   typedef cluster::union_find::node fragment_t;
-  std::vector<fragment_t> fragments(num_sites);
-  std::vector<int> flip(num_sites);
+  std::vector<fragment_t> fragments(lattice.num_sites());
+  std::vector<int> flip(lattice.num_sites());
 
   // observables
   cluster::observable num_clusters, energy, magnetization2, magnetization4;
@@ -71,7 +70,7 @@ int main(int argc, char* argv[]) {
     // assign cluster id & accumulate cluster properties
     int nc = 0;
     double mag2 = 0, mag4 = 0;
-    for (int f = 0; f < num_sites; ++f) {
+    for (int f = 0; f < lattice.num_sites(); ++f) {
       if (fragments[f].is_root()) {
         fragments[f].set_id(nc++);
         double w = fragments[f].weight();
@@ -79,21 +78,25 @@ int main(int argc, char* argv[]) {
         mag4 += power4(w);
       }
     }
-    for (int f = 0; f < num_sites; ++f) fragments[f].set_id(cluster_id(fragments, f));
+    for (int f = 0; f < lattice.num_sites(); ++f)
+      fragments[f].set_id(cluster_id(fragments, f));
 
     // determine whether clusters are flipped or not
-    for (int c = 0; c < nc; ++c) flip[c] = static_cast<int>(q * uniform_01());
+    for (int c = 0; c < nc; ++c)
+      flip[c] = static_cast<int>(q * uniform_01());
 
     // flip spins
-    for (int s = 0; s < num_sites; ++s)
+    for (int s = 0; s < lattice.num_sites(); ++s)
       spins[s] = (spins[s] + flip[fragments[s].id()]) % q;
+
+    double ene = 0;
+    for (int b = 0; b < lattice.num_bonds(); ++b) {
+      ene -= (spins[lattice.source(b)] == spins[lattice.target(b)] ? 1.0 : 0.0);
+    }
 
     if (mcs >= therm) {
       num_clusters << (double)nc;
-      double ne = 0;
-      for (int b = 0; b < lattice.num_bonds(); ++b)
-        ne += (spins[lattice.source(b)] == spins[lattice.target(b)] ? 1.0 : 0.0);
-      energy << -ne / num_sites;
+      energy << ene / lattice.num_sites();
       magnetization2 << mag2;
       double fc = 2.0 / (q - 1);
       magnetization4 << ((1+fc) * power2(mag2) - fc * mag4);

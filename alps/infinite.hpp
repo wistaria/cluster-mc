@@ -2,7 +2,7 @@
 *
 * Cluster-MC: Cluster Algorithm Monte Carlo Methods
 *
-* Copyright (C) 2014 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
+* Copyright (C) 2014-2016 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
 *
 * Distributed under the Boost Software License, Version 1.0. (See accompanying
 * file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -77,16 +77,17 @@ public:
         mag4 += power4(w);
       }
     }
-    for (int f = 0; f < num_sites; ++f) fragments[f].set_id(cluster_id(fragments, f));
+    for (int f = 0; f < num_sites; ++f)
+      fragments[f].set_id(cluster_id(fragments, f));
 
     // flip spins
     for (int c = 0; c < nc; ++c) to_flip[c] = (uniform_01() < 0.5);
-    double mu = 0;
-    for (int s = 0; s < num_sites; ++s) {
+    for (int s = 0; s < num_sites; ++s)
       if (to_flip[fragments[s].id()]) spins[s] ^= 1;
-      mu += 2 * spins[s] - 1;
-    }
-    
+
+    double mu = 0;
+    for (int s = 0; s < num_sites; ++s) mu += 2 * spins[s] - 1;
+
     obs["Number of Clusters"] << (double)nc;
     obs["Magnetization (unimproved)"] << mu;
     obs["Magnetization^2 (unimproved)"] << power2(mu);

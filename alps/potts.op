@@ -11,7 +11,7 @@ WORKER_SEED = 93812;
 DISORDER_SEED = 93812;
 [results]
 Binder Ratio of Order Parameter: 0.88264 +/- 0.00197
-Energy: 106.175 +/- 0.158; tau = 4.88
+Energy: -106.175 +/- 0.158; tau = 4.88
     bin #1   : 65536    entries: error = 0.0480412
     bin #2   : 32768    entries: error = 0.0650804
     bin #3   : 16384    entries: error = 0.0866657
@@ -22,7 +22,7 @@ Energy: 106.175 +/- 0.158; tau = 4.88
     bin #8   : 512      entries: error = 0.163715
     bin #9   : 256      entries: error = 0.169937
     bin #10  : 128      entries: error = 0.157551
-Energy Density: 1.65898 +/- 0.00246; tau = 4.88
+Energy Density: -1.65898 +/- 0.00246; tau = 4.88
     bin #1   : 65536    entries: error = 0.000750644
     bin #2   : 32768    entries: error = 0.00101688
     bin #3   : 16384    entries: error = 0.00135415

@@ -1,6 +1,6 @@
 # Cluster-MC: Cluster Algorithm Monte Carlo Methods
 
-Copyright (C) 1997-2014 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
+Copyright (C) 1997-2016 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
 
 ## Install
 
@@ -26,10 +26,12 @@ Copyright (C) 1997-2014 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
 ## Algorithms
 
 * infinite: O(N) Swendsen-Wang Cluster Algorithm for Infinite Ragnge Ising Model
+* potts: Swendsen-Wang Cluster Algorithm for Potts Model
 
 ## Release Note
 
 * Release 0.2
+    * potts: Swendsen-Wang Cluster Algorithm for Potts Model
     * standalone version of applications
     * site and bond percolation problems
 * Release 0.1 (2014/07/05)
@@ -53,5 +55,3 @@ Copyright (C) 1997-2014 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
 * _Loop Algorithm,_ S. Todo, in _Strongly Correlated Systems: Numerical Methods_ (Springer Series in Solid-State Sciences), ed. A. Avella, F. Mancini, pp. 153-184 (Springer-Verlag, Berlin, 2013).
 * ALPS: [http://alps.comp-phys.org/](http://alps.comp-phys.org/).
 * ALPS/looper: [http://exa.phys.s.u-tokyo.ac.jp/alps-looper](http://exa.phys.s.u-tokyo.ac.jp/alps-looper)
-
-

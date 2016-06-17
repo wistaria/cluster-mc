@@ -68,7 +68,7 @@ public:
       if (spins[lattice.source(b)] == spins[lattice.target(b)] && uniform_01() < prob)
         unify(fragments, lattice.source(b), lattice.target(b));
     }
-    
+
     // assign cluster id & accumulate cluster properties
     int nc = 0;
     double mag2 = 0, mag4 = 0;
@@ -90,10 +90,10 @@ public:
     // flip spins
     for (int s = 0; s < lattice.num_sites(); ++s)
       spins[s] = (spins[s] + flip[fragments[s].id()]) % q;
-    
+
     double ene = 0;
     BOOST_FOREACH(bond_descriptor b, lattice.bonds()) {
-      ene += (spins[lattice.source(b)] == spins[lattice.target(b)] ? 1.0 : 0.0);
+      ene -= (spins[lattice.source(b)] == spins[lattice.target(b)] ? 1.0 : 0.0);
     }
 
     obs["Number of Sites"] << (double)lattice.num_sites();

@@ -75,7 +75,8 @@ int main(int argc, char* argv[]) {
         mag4 += power4(w);
       }
     }
-    for (int f = 0; f < num_sites; ++f) fragments[f].set_id(cluster_id(fragments, f));
+    for (int f = 0; f < num_sites; ++f)
+      fragments[f].set_id(cluster_id(fragments, f));
 
     // flip spins
     for (int c = 0; c < nc; ++c) to_flip[c] = (uniform_01() < 0.5);
