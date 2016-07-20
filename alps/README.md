@@ -1,10 +1,9 @@
-Cluster-MC: Cluster Algorithm Monte Carlo Methods
-=================================================
+# Cluster-MC: Cluster Algorithm Monte Carlo Methods
 
 Copyright (C) 1997-2014 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
 
-Algorithms
-----------
+##Algorithms
+
 
 * infinite: O(N) Swendsen-Wang Cluster Algorithm for Infinite Ragnge Ising Model
     * Hamiltonian
@@ -19,5 +18,14 @@ Algorithms
         * Magnetization^4 (unimproved): (\sum_i \sigma_i)^4
         * Magnetization^2: improved estimator for Magnetization^2
         * Magnetization^4: improved estimator for Magnetization^4
-	* Binder Ratio of Magnetization (unimproved): Q = <m^2>^2/<m^4>
-	* Binder Ratio of Magnetization: improved estimator for Q
+        * Binder Ratio of Magnetization (unimproved): Q = (m^2)^2/(m^4)
+        * Binder Ratio of Magnetization: improved estimator for Q
+* percolation: Site/Bond Percolation Problems
+    * paramters
+        * LATTICE : Name of Lattice
+        * L, etc : Linear Size of Lattice
+        * P : Occupation Probability
+    * observables
+        * Number of Clusters: average number of clusters
+        * Average Size of Clusters
+        * Strength of Largest Cluster

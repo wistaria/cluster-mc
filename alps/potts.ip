@@ -1,0 +1,6 @@
+ALGORITHM = "potts"
+SEED = 93812
+Q = 3
+LATTICE = "square lattice"
+L = 8
+{ T = 0.994973 }

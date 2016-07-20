@@ -9,14 +9,13 @@
 *
 *****************************************************************************/
 
-// O(N) Swendsen-Wang Cluster Algorithm for Infinite Range Ising Model
+// Site Percolation Problem
 
-#include "infinite.h"
 #include <alps/parapack/parapack.h>
+#include "percolation_site.hpp"
 
 int main(int argc, char** argv) { return alps::parapack::start(argc, argv); }
 
-PARAPACK_SET_VERSION(infinite_worker::program());
-PARAPACK_SET_COPYRIGHT(infinite_worker::copyright());
-PARAPACK_REGISTER_WORKER(infinite_worker, "infinite");
-PARAPACK_REGISTER_EVALUATOR(infinite_evaluator, "infinite");
+PARAPACK_SET_VERSION(percolation_site_worker::program());
+PARAPACK_SET_COPYRIGHT(percolation_site_worker::copyright());
+PARAPACK_REGISTER_WORKER(percolation_site_worker, "site percolation");
