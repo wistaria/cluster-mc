@@ -72,22 +72,18 @@ public:
     // assign cluster id & accumulate cluster properties
     int nc = 0;
     double mag2 = 0, mag4 = 0;
-    for (int f = 0; f < lattice.num_sites(); ++f) {
-      if (fragments[f].is_root()) {
-        fragments[f].set_id(nc++);
-        double w = fragments[f].weight();
+    BOOST_FOREACH(fragment_t& f, fragments) {
+      if (f.is_root()) {
+        f.set_id(nc++);
+        double w = f.weight();
         mag2 += power2(w);
         mag4 += power4(w);
       }
     }
-    for (int f = 0; f < lattice.num_sites(); ++f)
-      fragments[f].set_id(cluster_id(fragments, f));
-
-    // determine whether clusters are flipped or not
-    for (int c = 0; c < nc; ++c)
-      flip[c] = static_cast<int>(q * uniform_01());
+    BOOST_FOREACH(fragment_t& f, fragments) f.set_id(cluster_id(fragments, f));
 
     // flip spins
+    for (int c = 0; c < nc; ++c) flip[c] = static_cast<int>(q * uniform_01());
     for (int s = 0; s < lattice.num_sites(); ++s)
       spins[s] = (spins[s] + flip[fragments[s].id()]) % q;
 

@@ -7,7 +7,7 @@
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
 
-set(PROGS infinite potts)
+set(PROGS potts infinite percolation_bond percolation_site cluster)
 foreach(name ${PROGS})
   set(target_name ${name}_alps)
   add_executable(${target_name} ${name}.cpp)

@@ -1,0 +1,6 @@
+ALGORITHM = "bond percolation"
+SEED = 93812
+LATTICE = "square lattice"
+L = 256
+SWEEPS = 256
+{ PROBABILITY = 0.5 }
