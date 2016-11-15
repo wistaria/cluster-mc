@@ -11,7 +11,9 @@
 
 // Site Percolation Problem on Square Lattice
 
-#define ALPS_INDEP_SOURCE
+#ifndef ALPS_INDEP_SOURCE
+# define ALPS_INDEP_SOURCE
+#endif
 
 #include <boost/foreach.hpp>
 #include <boost/random.hpp>

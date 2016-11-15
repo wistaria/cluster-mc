@@ -5,6 +5,7 @@ N = 128;
 T = 1.0;
 DIR_NAME = .;
 BASE_NAME = task1;
+CLONE_ID = 1;
 WORKER_SEED = 93812;
 DISORDER_SEED = 93812;
 [results]
