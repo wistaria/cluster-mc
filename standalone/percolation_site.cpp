@@ -21,13 +21,13 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
-#include <cluster/observable.hpp>
-#include <cluster/power.hpp>
+#include <stat/accumulator.hpp>
+#include <math/power.hpp>
 #include <cluster/union_find.hpp>
 #include <cluster/square_lattice.hpp>
 #include "percolation_options.hpp"
 
-using cluster::power2;
+using math::power2;
 
 int main(int argc, char* argv[]) {
   std::cout << "Site Percolation Problem on Square Lattice\n";
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
   std::vector<fragment_t> fragments(lattice.num_sites());
 
   // observables
-  cluster::observable num_clusters("Number of Clusters"), strength("Strength of Largest Cluster"),
+  stat::accumulator num_clusters("Number of Clusters"), strength("Strength of Largest Cluster"),
     cluster_size("Cluster Size");
 
   boost::timer tm;

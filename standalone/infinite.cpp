@@ -11,7 +11,9 @@
 
 // O(N) Swendsen-Wang Cluster Algorithm for Infinite Range Ising Model
 
-#define ALPS_INDEP_SOURCE
+#ifndef ALPS_INDEP_SOURCE
+# define ALPS_INDEP_SOURCE
+#endif
 
 #include <boost/foreach.hpp>
 #include <boost/random.hpp>
@@ -19,14 +21,14 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
-#include <cluster/observable.hpp>
-#include <cluster/power.hpp>
+#include <stat/accumulator.hpp>
+#include <math/power.hpp>
 #include <cluster/union_find.hpp>
 #include <cluster/fully_connected_lattice.hpp>
 #include "infinite_options.hpp"
 
-using cluster::power2;
-using cluster::power4;
+using math::power2;
+using math::power4;
 
 int main(int argc, char* argv[]) {
   std::cout << "O(N) Swendsen-Wang Cluster Algorithm for Infinite Range Ising Model\n";
@@ -52,7 +54,7 @@ int main(int argc, char* argv[]) {
   std::vector<bool> flip(lattice.num_sites());
 
   // observables
-  cluster::observable num_clusters("Number of Clusters"),
+  stat::accumulator num_clusters("Number of Clusters"),
     magnetization_unimp("Magnetization (unimproved)"),
     magnetization2_unimp("Magnetization^2 (unimproved)"),
     magnetization4_unimp("Magnetization^4 (unimproved)"),

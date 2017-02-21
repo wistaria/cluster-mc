@@ -14,10 +14,10 @@
 #include <alps/parapack/worker.h>
 #include <algorithm>
 #include <vector>
-#include <cluster/power.hpp>
+#include <math/power.hpp>
 #include <cluster/union_find.hpp>
 
-using cluster::power2;
+using math::power2;
 
 class percolation_site_worker : public alps::parapack::mc_worker {
 private:

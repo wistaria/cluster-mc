@@ -15,12 +15,12 @@
 #include <algorithm>
 #include <boost/foreach.hpp>
 #include <vector>
-#include <cluster/power.hpp>
+#include <math/power.hpp>
 #include <cluster/union_find.hpp>
 #include <cluster/fully_connected_lattice.hpp>
 
-using cluster::power2;
-using cluster::power4;
+using math::power2;
+using math::power4;
 
 class infinite_worker : public alps::parapack::mc_worker {
 private:
