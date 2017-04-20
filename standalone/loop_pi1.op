@@ -1,0 +1,10 @@
+Loop Algorithm for Spin-1/2 Antiferromagnetic Heisenberg Chain
+Seed of RNG            = 29833
+System Length          = 8
+Temperature            = 0.2
+MCS for Thermalization = 8192
+MCS for Measurement    = 65536
+Energy Density = -0.441579 +- 0.000526662
+Staggered Magnetizetion^2 = 0.823555 +- 0.00141876
+Uniform Susceptibility = 0.0780678 +- 0.000533039
+Staggered Susceptibility = 2.40497 +- 0.00441979

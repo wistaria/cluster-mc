@@ -7,7 +7,7 @@
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 #
 
-set(PROGS infinite ising potts percolation_bond percolation_site )
+set(PROGS infinite ising potts percolation_bond percolation_site loop_pi0 loop_pi1 loop_fsse loop_vsse)
 foreach(name ${PROGS})
   set(target_name ${name}_standalone)
   add_executable(${target_name} ${name}.cpp)

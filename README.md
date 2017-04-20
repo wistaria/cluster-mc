@@ -1,6 +1,6 @@
 # Cluster-MC: Cluster Algorithm Monte Carlo Methods
 
-Copyright (C) 1997-2016 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
+Copyright (C) 1997-2017 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
 
 ## Install
 
@@ -10,26 +10,45 @@ Copyright (C) 1997-2016 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
     * ALPS_ROOT_DIR: path to ALPS library
     * BUILD_ALPS_APPLICATIONS: (default ON)
     * BUILD_STANDALONE_APPLICATIONS: (default ON)
-* Configure & make  
-     cmake -DALPS_ROOT_DIR /where_to_alps .
-     make
+* Build standalone programs only
+    ```
+    mkdir build
+    cd build
+    cmake ..
+    make
+    ```
+* Build ALPS and standalone programs
+    ```
+    mkdir build
+    cd build
+    cmake -DALPS_ROOT_DIR=/where_to_alps ..
+      (or if environment variable ALPS_ROOT is set, just type "cmake ..")
+    make
+    ```
 
 ## Directories
 
-* alps: contains applications that use the ALPS Libraries
-    (lattice, model, scheudler, etc)
-
+* alps: contains applications that use the ALPS Libraries (lattice, model, scheudler, etc)
 * standalone: contains standalone applications
-
 * cluster: contains common header files
+* config, math, stat: from standards library https://github.com/todo-group/standards
 
 ## Algorithms
 
 * infinite: O(N) Swendsen-Wang Cluster Algorithm for Infinite Ragnge Ising Model
+* ising: Swendsen-Wang Cluster Algorithm for Ising Model (standalone version only)
 * potts: Swendsen-Wang Cluster Algorithm for Potts Model
+* loop_*: Loop Algorithm for Spin-1/2 Antiferromagnetic Heisenberg Chain (standalone version only)
+   * loop_pi0: continuous time path integral; using std::list<> for operator string
+   * loop_pi1: continuous time path integral; using std::vector<> for operator string
+   * loop_fsse: fixed-length SSE
+   * loop_vsse: variable-length SSE
 
 ## Release Note
 
+* Release 0.3
+    * ising: Swendsen-Wang Cluster Algorithm for Ising Model (standalone version)
+    * loop_*: Loop Algorithm for Spin-1/2 Antiferromagnetic Heisenberg Chain (standalone version)
 * Release 0.2
     * potts: Swendsen-Wang Cluster Algorithm for Potts Model
     * standalone version of applications
