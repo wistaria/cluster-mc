@@ -11,7 +11,9 @@
 
 // Swendsen-Wang Cluster Algorithm for Square-Lattice Potts Model
 
-#define ALPS_INDEP_SOURCE
+#ifndef ALPS_INDEP_SOURCE
+# define ALPS_INDEP_SOURCE
+#endif
 
 #include <boost/foreach.hpp>
 #include <boost/random.hpp>
@@ -20,14 +22,14 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
-#include <cluster/observable.hpp>
-#include <cluster/power.hpp>
+#include <stat/accumulator.hpp>
+#include <math/power.hpp>
 #include <cluster/union_find.hpp>
 #include <cluster/square_lattice.hpp>
 #include "potts_options.hpp"
 
-using cluster::power2;
-using cluster::power4;
+using math::power2;
+using math::power4;
 
 int main(int argc, char* argv[]) {
   std::cout << "Swendsen-Wang Cluster Algorithm for Square Lattice Potts Model\n";
@@ -53,7 +55,7 @@ int main(int argc, char* argv[]) {
   std::vector<int> flip(lattice.num_sites());
 
   // observables
-  cluster::observable num_clusters("Number of Clusters"), energy("Energy Density"),
+  stat::accumulator num_clusters("Number of Clusters"), energy("Energy Density"),
     magnetization2("Order Parameter^2"), magnetization4("Order Parameter^4");
 
   boost::timer tm;
