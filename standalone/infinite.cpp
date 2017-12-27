@@ -15,16 +15,16 @@
 # define ALPS_INDEP_SOURCE
 #endif
 
-#include <boost/foreach.hpp>
-#include <boost/random.hpp>
-#include <boost/timer.hpp>
 #include <algorithm>
 #include <iostream>
 #include <vector>
-#include <stat/accumulator.hpp>
+#include <boost/foreach.hpp>
+#include <boost/random.hpp>
+#include <boost/timer.hpp>
+#include <lattice/fully_connected.hpp>
 #include <math/power.hpp>
+#include <stat/accumulator.hpp>
 #include <cluster/union_find.hpp>
-#include <cluster/fully_connected_lattice.hpp>
 #include "infinite_options.hpp"
 
 using math::power2;
@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
   if (!p.valid) std::exit(127);
 
   // fully-connected lattice
-  cluster::fully_connected_lattice lattice(p.num_sites);
+  lattice::fully_connected lattice(p.num_sites);
 
   // random number generators
   boost::mt19937 eng(p.seed);

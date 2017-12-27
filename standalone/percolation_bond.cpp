@@ -15,16 +15,16 @@
 # define ALPS_INDEP_SOURCE
 #endif
 
-#include <boost/foreach.hpp>
-#include <boost/random.hpp>
-#include <boost/timer.hpp>
 #include <cmath>
 #include <iostream>
 #include <vector>
-#include <stat/accumulator.hpp>
+#include <boost/foreach.hpp>
+#include <boost/random.hpp>
+#include <boost/timer.hpp>
 #include <math/power.hpp>
+#include <lattice/square.hpp>
+#include <stat/accumulator.hpp>
 #include <cluster/union_find.hpp>
-#include <cluster/square_lattice.hpp>
 #include "percolation_options.hpp"
 
 using math::power2;
@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
   if (!p.valid) std::exit(127);
 
   // square lattice
-  cluster::square_lattice lattice(p.length);
+  lattice::square lattice(p.length);
 
   // random number generators
   boost::mt19937 eng(p.seed);

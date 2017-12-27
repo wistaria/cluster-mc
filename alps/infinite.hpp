@@ -11,13 +11,13 @@
 
 // O(N) Swendsen-Wang Cluster Algorithm for Infinite Range Ising Model
 
-#include <alps/parapack/worker.h>
 #include <algorithm>
-#include <boost/foreach.hpp>
 #include <vector>
+#include <boost/foreach.hpp>
+#include <alps/parapack/worker.h>
 #include <math/power.hpp>
+#include <lattice/fully_connected.hpp>
 #include <cluster/union_find.hpp>
-#include <cluster/fully_connected_lattice.hpp>
 
 using math::power2;
 using math::power4;
@@ -102,7 +102,7 @@ public:
   void load(alps::IDump& dp) { dp >> mcs >> spins; }
 
 private:
-  cluster::fully_connected_lattice lattice;
+  lattice::fully_connected lattice;
   double temperature; // temperature
   boost::variate_generator<engine_type&, boost::exponential_distribution<> > r_time;
   alps::mc_steps mcs;

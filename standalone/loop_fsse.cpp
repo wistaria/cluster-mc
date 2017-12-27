@@ -16,12 +16,12 @@
 # define ALPS_INDEP_SOURCE
 #endif
 
-#include <boost/foreach.hpp>
-#include <boost/random.hpp>
-#include <boost/timer.hpp>
 #include <algorithm> // for std::swap
 #include <iostream>
 #include <vector>
+#include <boost/foreach.hpp>
+#include <boost/random.hpp>
+#include <boost/timer.hpp>
 #include <math/power.hpp>
 #include <stat/accumulator.hpp>
 #include <cluster/union_find.hpp>
