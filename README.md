@@ -74,3 +74,4 @@ Copyright (C) 1997-2017 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
 * _Loop Algorithm,_ S. Todo, in _Strongly Correlated Systems: Numerical Methods_ (Springer Series in Solid-State Sciences), ed. A. Avella, F. Mancini, pp. 153-184 (Springer-Verlag, Berlin, 2013).
 * ALPS: [http://alps.comp-phys.org/](http://alps.comp-phys.org/).
 * ALPS/looper: [http://exa.phys.s.u-tokyo.ac.jp/alps-looper](http://exa.phys.s.u-tokyo.ac.jp/alps-looper)
+* For the variable length SSE, see _Optimized broad-histogram ensembles for the simulation of quantum systems,_ S. Wessel, N. Stoop, E. Gull, S. Trebst and M. Troyer, J. Stat. Mech. P12005 (2007).
