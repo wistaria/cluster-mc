@@ -1,11 +1,12 @@
 # Cluster-MC: Cluster Algorithm Monte Carlo Methods
 
-Copyright (C) 1997-2017 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
+Copyright (C) 1997-2019 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
 
 ## Install
 
 * Prerequisites
-    * ALPS Library
+    * Eigen3
+    * ALPS Library (optional)
 * CMake Options
     * ALPS_ROOT_DIR: path to ALPS library
     * BUILD_ALPS_APPLICATIONS: (default ON)
@@ -31,7 +32,8 @@ Copyright (C) 1997-2017 by Synge Todo <wistaria@phys.s.u-tokyo.ac.jp>
 * alps: contains applications that use the ALPS Libraries (lattice, model, scheudler, etc)
 * standalone: contains standalone applications
 * cluster: contains common header files
-* config, math, stat: from standards library https://github.com/todo-group/standards
+* tool/standards: from standards library https://github.com/todo-group/standards
+* tool/lattice: from lattice library https://github.com/todo-group/lattice
 
 ## Algorithms
 

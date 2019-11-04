@@ -10,7 +10,7 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(cluster_mc NONE)
 
-list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/config)
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/tool/standards/config)
 include(core)
 
 # Eigen3
