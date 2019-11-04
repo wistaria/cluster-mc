@@ -17,18 +17,17 @@
 
 #include <algorithm>
 #include <iostream>
+#include <random>
 #include <vector>
-#include <boost/foreach.hpp>
-#include <boost/random.hpp>
-#include <boost/timer.hpp>
-#include <lattice/fully_connected.hpp>
-#include <math/power.hpp>
-#include <stat/accumulator.hpp>
+#include <standards/accumulator.hpp>
+#include <standards/power.hpp>
+#include <standards/timer.hpp>
+#include <lattice/graph.hpp>
 #include <cluster/union_find.hpp>
 #include "infinite_options.hpp"
 
-using math::power2;
-using math::power4;
+using standards::power2;
+using standards::power4;
 
 int main(int argc, char* argv[]) {
   std::cout << "O(N) Swendsen-Wang Cluster Algorithm for Infinite Range Ising Model\n";
@@ -36,14 +35,13 @@ int main(int argc, char* argv[]) {
   if (!p.valid) std::exit(127);
 
   // fully-connected lattice
-  lattice::fully_connected lattice(p.num_sites);
+  auto lattice = lattice::graph::fully_connected(p.num_sites);
 
   // random number generators
-  boost::mt19937 eng(p.seed);
-  boost::variate_generator<boost::mt19937&, boost::uniform_real<> >
-    uniform_01(eng, boost::uniform_real<>());
-  boost::variate_generator<boost::mt19937&, boost::exponential_distribution<> >
-    r_time(eng, boost::exponential_distribution<>(lattice.num_sites() / p.temperature));
+  std::mt19937 eng(p.seed);
+  
+  std::uniform_real_distribution<> r_uniform01;
+  std::exponential_distribution<> r_time(lattice.num_sites() / p.temperature);
 
   // spin configuration
   std::vector<int> spins(lattice.num_sites(), 1);
@@ -54,28 +52,28 @@ int main(int argc, char* argv[]) {
   std::vector<bool> flip(lattice.num_sites());
 
   // observables
-  stat::accumulator num_clusters("Number of Clusters"),
+  standards::accumulator num_clusters("Number of Clusters"),
     magnetization_unimp("Magnetization (unimproved)"),
     magnetization2_unimp("Magnetization^2 (unimproved)"),
     magnetization4_unimp("Magnetization^4 (unimproved)"),
     magnetization2("Magnetization^2"), magnetization4("Magnetization^4");
 
-  boost::timer tm;
+  standards::timer tm;
   for (unsigned int mcs = 0; mcs < p.therm + p.sweeps; ++mcs) {
     // initialize cluster information
     std::fill(fragments.begin(), fragments.end(), fragment_t());
 
     // cluster generation
-    for (double t = r_time(); t < 1; t += r_time()) {
-      int s0 = lattice.num_sites() * uniform_01();
-      int s1 = lattice.num_sites() * uniform_01();
+    for (double t = r_time(eng); t < 1; t += r_time(eng)) {
+      int s0 = lattice.num_sites() * r_uniform01(eng);
+      int s1 = lattice.num_sites() * r_uniform01(eng);
       if (spins[s0] == spins[s1]) unify(fragments, s0, s1);
     }
 
     // assign cluster id & accumulate cluster properties
     int nc = 0;
     double mag2 = 0, mag4 = 0;
-    BOOST_FOREACH(fragment_t& f, fragments) {
+    for (auto& f : fragments) {
       if (f.is_root()) {
         f.set_id(nc++);
         double w = f.weight();
@@ -83,10 +81,10 @@ int main(int argc, char* argv[]) {
         mag4 += power4(w);
       }
     }
-    BOOST_FOREACH(fragment_t& f, fragments) f.set_id(cluster_id(fragments, f));
+    for (auto& f : fragments) f.set_id(cluster_id(fragments, f));
 
     // flip spins
-    for (int c = 0; c < nc; ++c) flip[c] = (uniform_01() < 0.5);
+    for (int c = 0; c < nc; ++c) flip[c] = (r_uniform01(eng) < 0.5);
     for (int s = 0; s < lattice.num_sites(); ++s)
       if (flip[fragments[s].id()]) spins[s] ^= 1;
 

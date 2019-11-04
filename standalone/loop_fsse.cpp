@@ -18,16 +18,15 @@
 
 #include <algorithm> // for std::swap
 #include <iostream>
+#include <random>
 #include <vector>
-#include <boost/foreach.hpp>
-#include <boost/random.hpp>
-#include <boost/timer.hpp>
-#include <math/power.hpp>
-#include <stat/accumulator.hpp>
+#include <standards/accumulator.hpp>
+#include <standards/power.hpp>
+#include <standards/timer.hpp>
 #include <cluster/union_find.hpp>
 #include "loop_options.hpp"
 
-using math::power2;
+using standards::power2;
 
 enum operator_type { diagonal, offdiagonal, identity };
 
@@ -66,9 +65,8 @@ int main(int argc, char* argv[]) {
   const double lb2 = nbonds * beta / 2;
 
   // random number generators
-  boost::mt19937 eng(p.seed);
-  boost::variate_generator<boost::mt19937&, boost::uniform_real<> >
-    random(eng, boost::uniform_real<>());
+  std::mt19937 eng(p.seed);
+  std::uniform_real_distribution<> r_uniform01;
 
   // vector of operators
   std::vector<local_operator_t> operators(nbonds);
@@ -83,22 +81,21 @@ int main(int argc, char* argv[]) {
   std::vector<cluster_t> clusters;
 
   // oservables
-  stat::accumulator energy("Energy Density"), smag("Staggered Magnetizetion^2"),
+  standards::accumulator energy("Energy Density"), smag("Staggered Magnetizetion^2"),
     ssus("Staggered Susceptibility"), usus("Uniform Susceptibility");
 
   //
   // Monte Carlo steps
   //
 
-  boost::timer tm;
+  standards::timer tm;
 
   for (unsigned int mcs = 0; mcs < therm + sweeps; ++mcs) {
     // adjust length of operator string
     if (nop > 0.8 * operators.size()) {
       std::vector<local_operator_t> operators_new(2 * operators.size());
       std::vector<local_operator_t>::iterator itr_new = operators_new.begin();
-      for (std::vector<local_operator_t>::iterator itr = operators.begin();
-           itr!= operators.end(); ++itr, itr_new += 2) *itr_new = *itr;
+      for (auto itr = operators.begin(); itr!= operators.end(); ++itr, itr_new += 2) *itr_new = *itr;
       std::swap(operators, operators_new);
     }
 
@@ -107,14 +104,13 @@ int main(int argc, char* argv[]) {
     std::fill(fragments.begin(), fragments.end(), fragment_t());
     for (unsigned int s = 0; s < nsites; ++s) current[s] = s;
 
-    for (std::vector<local_operator_t>::iterator oi = operators.begin();
-         oi != operators.end(); ++oi) {
+    for (auto oi = operators.begin(); oi != operators.end(); ++oi) {
 
       // diagonal update
       if (oi->type == identity) {
-        unsigned int b = nbonds * random();
+        unsigned int b = nbonds * r_uniform01(eng);
         if (spins[left(nbonds, b)] != spins[right(nbonds, b)] &&
-            (operators.size() - nop) * random() < lb2) {
+            (operators.size() - nop) * r_uniform01(eng) < lb2) {
           *oi = local_operator_t(b);
           ++nop;
         } else {
@@ -122,7 +118,7 @@ int main(int argc, char* argv[]) {
         }
       } else {
         if (oi->type == diagonal &&
-            lb2 * random() < operators.size() - nop + 1) {
+            lb2 * r_uniform01(eng) < operators.size() - nop + 1) {
           oi->type = identity;
           --nop;
           continue;
@@ -149,15 +145,14 @@ int main(int argc, char* argv[]) {
 
     // assign cluster id & determine if clusters are to be flipped
     int nc = 0;
-    BOOST_FOREACH(fragment_t& f, fragments) { if (f.is_root()) f.set_id(nc++); }
+    for (auto& f : fragments) { if (f.is_root()) f.set_id(nc++); }
     clusters.resize(nc);
-    BOOST_FOREACH(fragment_t& f, fragments) { f.set_id(cluster_id(fragments, f)); }
-    for (int c = 0; c < nc; ++c) clusters[c] = cluster_t(random() < 0.5);
+    for (auto& f : fragments) { f.set_id(cluster_id(fragments, f)); }
+    for (int c = 0; c < nc; ++c) clusters[c] = cluster_t(r_uniform01(eng) < 0.5);
 
     // 'flip' operators & do improved measurements
     unsigned int t = 0;
-    for (std::vector<local_operator_t>::iterator oi = operators.begin();
-         oi != operators.end(); ++oi) {
+    for (auto oi = operators.begin(); oi != operators.end(); ++oi) {
       if (oi->type == identity) continue;
       int id_l = fragments[oi->lower_loop].id();
       int id_u = fragments[oi->upper_loop].id();
@@ -186,8 +181,7 @@ int main(int argc, char* argv[]) {
     double s2 = 0;
     double m2 = 0;
     double l2 = 0;
-    for (std::vector<cluster_t>::const_iterator pi = clusters.begin();
-         pi != clusters.end(); ++pi) {
+    for (auto pi = clusters.begin(); pi != clusters.end(); ++pi) {
       s2 += power2(pi->size);
       m2 += power2(pi->mag);
       l2 += power2(pi->length);

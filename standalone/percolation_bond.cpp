@@ -18,16 +18,15 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
-#include <boost/foreach.hpp>
-#include <boost/random.hpp>
-#include <boost/timer.hpp>
-#include <math/power.hpp>
-#include <lattice/square.hpp>
-#include <stat/accumulator.hpp>
+#include <random>
+#include <standards/accumulator.hpp>
+#include <standards/power.hpp>
+#include <standards/timer.hpp>
+#include <lattice/graph.hpp>
 #include <cluster/union_find.hpp>
 #include "percolation_options.hpp"
 
-using math::power2;
+using standards::power2;
 
 int main(int argc, char* argv[]) {
   std::cout << "Bond Percolation Problem on Square Lattice\n";
@@ -35,34 +34,33 @@ int main(int argc, char* argv[]) {
   if (!p.valid) std::exit(127);
 
   // square lattice
-  lattice::square lattice(p.length);
+  auto lattice = lattice::graph::simple(2, p.length);
 
   // random number generators
-  boost::mt19937 eng(p.seed);
-  boost::variate_generator<boost::mt19937&, boost::uniform_real<> >
-    uniform_01(eng, boost::uniform_real<>());
+  std::mt19937 eng(p.seed);
+  std::uniform_real_distribution<> r_uniform01;
 
   // cluster information
   typedef cluster::union_find::node fragment_t;
   std::vector<fragment_t> fragments(lattice.num_sites());
 
   // observables
-  stat::accumulator num_clusters("Number of Clusters"), strength("Strength of Largest Cluster"),
+  standards::accumulator num_clusters("Number of Clusters"), strength("Strength of Largest Cluster"),
     cluster_size("Cluster Size");
 
-  boost::timer tm;
+  standards::timer tm;
   for (unsigned int mcs = 0; mcs < p.sweeps; ++mcs) {
     // initialize cluster information
     std::fill(fragments.begin(), fragments.end(), fragment_t());
 
     // cluster generation
     for (int b = 0; b < lattice.num_bonds(); ++b)
-      if (uniform_01() < p.probability) unify(fragments, lattice.source(b), lattice.target(b));
+      if (r_uniform01(eng) < p.probability) unify(fragments, lattice.source(b), lattice.target(b));
 
     // accumulate cluster properties
     int nc = 0;
     double wmax = 0, mag2 = 0;
-    BOOST_FOREACH(fragment_t& f, fragments) {
+    for (auto& f : fragments) {
       if (f.is_root()) {
         ++nc;
         double w = f.weight();

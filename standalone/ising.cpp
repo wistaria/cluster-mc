@@ -18,18 +18,17 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <random>
 #include <vector>
-#include <boost/foreach.hpp>
-#include <boost/random.hpp>
-#include <boost/timer.hpp>
-#include <math/power.hpp>
-#include <lattice/square.hpp>
-#include <stat/accumulator.hpp>
+#include <standards/accumulator.hpp>
+#include <standards/power.hpp>
+#include <standards/timer.hpp>
+#include <lattice/graph.hpp>
 #include <cluster/union_find.hpp>
 #include "ising_options.hpp"
 
-using math::power2;
-using math::power4;
+using standards::power2;
+using standards::power4;
 
 int main(int argc, char* argv[]) {
   std::cout << "Swendsen-Wang Cluster Algorithm for Square Lattice Potts Model\n";
@@ -38,12 +37,11 @@ int main(int argc, char* argv[]) {
   double prob = 1 - std::exp(-2 / p.temperature);
 
   // square lattice
-  lattice::square lattice(p.length);
+  auto lattice = lattice::graph::simple(2, p.length);
 
   // random number generators
-  boost::mt19937 eng(p.seed);
-  boost::variate_generator<boost::mt19937&, boost::uniform_real<> >
-    uniform_01(eng, boost::uniform_real<>());
+  std::mt19937 eng(p.seed);
+  std::uniform_real_distribution<> r_uniform01;
 
   // spin configuration
   std::vector<int> spins(lattice.num_sites(), 1);
@@ -54,27 +52,27 @@ int main(int argc, char* argv[]) {
   std::vector<int> flip(lattice.num_sites());
 
   // observables
-  stat::accumulator num_clusters("Number of Clusters"), energy("Energy Density"),
+  standards::accumulator num_clusters("Number of Clusters"), energy("Energy Density"),
     magnetization_unimp("Magnetization (unimproved)"),
     magnetization2_unimp("Magnetization^2 (unimproved)"),
     magnetization4_unimp("Magnetization^4 (unimproved)"),
     magnetization2("Magnetization^2"), magnetization4("Magnetization^4");
 
-  boost::timer tm;
+  standards::timer tm;
   for (unsigned int mcs = 0; mcs < p.therm + p.sweeps; ++mcs) {
     // initialize cluster information
     std::fill(fragments.begin(), fragments.end(), fragment_t());
 
     // cluster generation
     for (int b = 0; b < lattice.num_bonds(); ++b) {
-      if (spins[lattice.source(b)] == spins[lattice.target(b)] && uniform_01() < prob)
+      if (spins[lattice.source(b)] == spins[lattice.target(b)] && r_uniform01(eng) < prob)
         unify(fragments, lattice.source(b), lattice.target(b));
     }
 
     // assign cluster id & accumulate cluster properties
     int nc = 0;
     double mag2 = 0, mag4 = 0;
-    BOOST_FOREACH(fragment_t& f, fragments) {
+    for (auto& f : fragments) {
       if (f.is_root()) {
         f.set_id(nc++);
         double w = f.weight();
@@ -82,10 +80,10 @@ int main(int argc, char* argv[]) {
         mag4 += power4(w);
       }
     }
-    BOOST_FOREACH(fragment_t& f, fragments) f.set_id(cluster_id(fragments, f));
+    for (auto& f : fragments) f.set_id(cluster_id(fragments, f));
 
     // flip spins
-    for (int c = 0; c < nc; ++c) flip[c] = (uniform_01() < 0.5);
+    for (int c = 0; c < nc; ++c) flip[c] = (r_uniform01(eng) < 0.5);
     for (int s = 0; s < lattice.num_sites(); ++s)
       if (flip[fragments[s].id()]) spins[s] ^= 1;
 

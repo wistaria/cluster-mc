@@ -9,7 +9,7 @@
 *
 *****************************************************************************/
 
-#include <boost/lexical_cast.hpp>
+#include <cstdlib>
 #include <iostream>
 
 struct options {
@@ -27,16 +27,16 @@ struct options {
         switch (argv[i][1]) {
         case 's' :
           if (++i == argc) { usage(print); return; }
-          seed = boost::lexical_cast<unsigned int>(argv[i]); break;
+          seed = std::atoi(argv[i]); break;
         case 'l' :
           if (++i == argc) { usage(print); return; }
-          length = boost::lexical_cast<unsigned int>(argv[i]); break;
+          length = std::atoi(argv[i]); break;
         case 'p' :
           if (++i == argc) { usage(print); return; }
-          probability = boost::lexical_cast<double>(argv[i]); break;
+          probability = std::atof(argv[i]); break;
         case 'm' :
           if (++i == argc) { usage(print); return; }
-          sweeps = boost::lexical_cast<unsigned int>(argv[i]); break;
+          sweeps = std::atoi(argv[i]); break;
         case 'h' :
           usage(print, std::cout); return;
         default :

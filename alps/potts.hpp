@@ -14,7 +14,7 @@
 #include <alps/parapack/worker.h>
 #include <algorithm>
 #include <vector>
-#include <math/power.hpp>
+#include <standards/power.hpp>
 #include <cluster/union_find.hpp>
 
 using math::power2;

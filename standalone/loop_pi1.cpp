@@ -18,16 +18,15 @@
 
 #include <algorithm> // for std::swap
 #include <iostream>
+#include <random>
 #include <vector>
-#include <boost/foreach.hpp>
-#include <boost/random.hpp>
-#include <boost/timer.hpp>
-#include <math/power.hpp>
-#include <stat/accumulator.hpp>
+#include <standards/accumulator.hpp>
+#include <standards/power.hpp>
+#include <standards/timer.hpp>
 #include <cluster/union_find.hpp>
 #include "loop_options.hpp"
 
-using math::power2;
+using standards::power2;
 
 enum operator_type { diagonal, offdiagonal };
 
@@ -66,11 +65,9 @@ int main(int argc, char* argv[]) {
   const double beta = 1. / p.temperature;
 
   // random number generators
-  boost::mt19937 eng(p.seed);
-  boost::variate_generator<boost::mt19937&, boost::uniform_real<> >
-    random(eng, boost::uniform_real<>());
-  boost::variate_generator<boost::mt19937&, boost::exponential_distribution<> >
-    r_time(eng, boost::exponential_distribution<>(beta * nbonds / 2));
+  std::mt19937 eng(p.seed);
+  std::uniform_real_distribution<> r_uniform01;
+  std::exponential_distribution<> r_time(beta * nbonds / 2);
 
   // vector of operators
   std::vector<local_operator_t> operators, operators_p;
@@ -84,14 +81,14 @@ int main(int argc, char* argv[]) {
   std::vector<cluster_t> clusters;
 
   // oservables
-  stat::accumulator energy("Energy Density"), smag("Staggered Magnetizetion^2"),
+  standards::accumulator energy("Energy Density"), smag("Staggered Magnetizetion^2"),
     ssus("Staggered Susceptibility"), usus("Uniform Susceptibility");
 
   //
   // Monte Carlo steps
   //
 
-  boost::timer tm;
+  standards::timer tm;
 
   for (unsigned int mcs = 0; mcs < therm + sweeps; ++mcs) {
     // initialize operator information
@@ -103,18 +100,17 @@ int main(int argc, char* argv[]) {
     std::fill(fragments.begin(), fragments.end(), fragment_t());
     for (unsigned int s = 0; s < nsites; ++s) current[s] = s;
 
-    double t = r_time();
-    for (std::vector<local_operator_t>::iterator opi = operators_p.begin();
-         t < 1 || opi != operators_p.end();) {
+    double t = r_time(eng);
+    for (auto opi = operators_p.begin(); t < 1 || opi != operators_p.end();) {
 
       // diagonal update
       if (opi == operators_p.end() || t < opi->time) {
-        unsigned int b = nbonds * random();
+        unsigned int b = nbonds * r_uniform01(eng);
         if (spins[left(nbonds, b)] != spins[right(nbonds, b)]) {
           operators.push_back(local_operator_t(b, t));
-          t += r_time();
+          t += r_time(eng);
         } else {
-          t += r_time();
+          t += r_time(eng);
           continue;
         }
       } else {
@@ -148,14 +144,13 @@ int main(int argc, char* argv[]) {
 
     // assign cluster id & determine if clusters are to be flipped
     int nc = 0;
-    BOOST_FOREACH(fragment_t& f, fragments) { if (f.is_root()) f.set_id(nc++); }
+    for (auto& f : fragments) { if (f.is_root()) f.set_id(nc++); }
     clusters.resize(nc);
-    BOOST_FOREACH(fragment_t& f, fragments) { f.set_id(cluster_id(fragments, f)); }
-    for (int c = 0; c < nc; ++c) clusters[c] = cluster_t(random() < 0.5);
+    for (auto& f : fragments) { f.set_id(cluster_id(fragments, f)); }
+    for (int c = 0; c < nc; ++c) clusters[c] = cluster_t(r_uniform01(eng) < 0.5);
 
     // 'flip' operators & do improved measurements
-    for (std::vector<local_operator_t>::iterator oi = operators.begin();
-         oi != operators.end(); ++oi) {
+    for (auto oi = operators.begin(); oi != operators.end(); ++oi) {
       int id_l = fragments[oi->lower_loop].id();
       int id_u = fragments[oi->upper_loop].id();
       clusters[id_l].length += 2 * oi->time;
@@ -182,8 +177,7 @@ int main(int argc, char* argv[]) {
     double s2 = 0;
     double m2 = 0;
     double l2 = 0;
-    for (std::vector<cluster_t>::const_iterator pi = clusters.begin();
-         pi != clusters.end(); ++pi) {
+    for (auto pi = clusters.begin(); pi != clusters.end(); ++pi) {
       s2 += power2(pi->size);
       m2 += power2(pi->mag);
       l2 += power2(pi->length);

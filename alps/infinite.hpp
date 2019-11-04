@@ -15,7 +15,7 @@
 #include <vector>
 #include <boost/foreach.hpp>
 #include <alps/parapack/worker.h>
-#include <math/power.hpp>
+#include <standards/power.hpp>
 #include <lattice/fully_connected.hpp>
 #include <cluster/union_find.hpp>
 
