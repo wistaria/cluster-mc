@@ -3,7 +3,7 @@ language: cpp
 addons:
   apt:
     packages:
-      - libboost-all-dev
+      - libeigen3-dev
 
 install: true
 
