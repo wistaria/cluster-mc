@@ -2,40 +2,29 @@
 *
 * Cluster-MC: Cluster Algorithm Monte Carlo Methods
 *
-* Copyright (C) 1997-2011 by Synge Todo <wistaria@comp-phys.org>
+* Copyright (C) 1997-2019 by Synge Todo <wistaria@comp-phys.org>
 *
 * Distributed under the Boost Software License, Version 1.0. (See accompanying
 * file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 *
 *****************************************************************************/
 
-// Weighted Union-Find Algorithm
+// Thread-safe weighted union-find algorithm
 // Reference:
 //   D. Knuth,
 //   `The Art of Computer Programming, Vol. 1, Fundamental Algorithms'
 //   3rd edition (Addison Wesley, Reading, 1997) Sec 2.3.3.
 
-#ifndef CLUSTER_UNION_FIND_H
-#define CLUSTER_UNION_FIND_H
-
-#ifndef ALPS_INDEP_SOURCE
-# include <alps/config.h>
-# if defined(CLUSTER_ENABLE_OPENMP) && defined(ALPS_ENABLE_OPENMP_WORKER) && !defined(CLUSTER_OPENMP)
-#  define CLUSTER_OPENMP
-# endif
-#else
-# if defined(CLUSTER_ENABLE_OPENMP) && defined(_OPENMP) && !defined(CLUSTER_OPENMP)
-#  define CLUSTER_OPENMP
-# endif
-#endif
+#pragma once
 
 #include <algorithm> // for std::swap
-#include <vector>
 #include <iostream>
+#include <limits>
+#include <vector>
 
-#ifdef CLUSTER_OPENMP
+#ifdef _OPENMP
 # include <omp.h>
-# include "atomic.h"
+# include <atomic>
 #endif
 
 namespace cluster {
@@ -44,7 +33,16 @@ namespace union_find {
 class node {
 public:
   node() : parent_(-1) {} // root node with weight = 1
-  ~node() {}
+#ifdef _OPENMP
+  node(const node& rhs) : id_(rhs.id_) { parent_.store(rhs.parent_.load()); }
+  node& operator=(const node& rhs) {
+    parent_.store(rhs.parent_.load());
+    id_ = rhs.id_;
+    return *this;
+  }
+#else
+  // default copy constructor and assignment operator is fine
+#endif
   bool is_root() const { return parent_ <= 0; }
   void set_parent(int parent) { parent_ = parent + 1; }
   int parent() const { return parent_ - 1; }
@@ -52,53 +50,42 @@ public:
   int weight() const { return -parent_; }
   void set_id(int id) { id_ = id; }
   int id() const { return id_; }
-#ifdef CLUSTER_OPENMP
+#ifdef _OPENMP
   int lock_root() {
     int p = parent_;
-    if (p < 0 && compare_and_swap(parent_, p, 0)) {
-      return -p;
-    } else {
-      return 0;
-    }
+    return (p < 0 && parent_.compare_exchange_weak(p, 0)) ? (-p) : 0;
+    //// example of THREAD-UNSAFE implementation
+    //   if (parent_ < 0) {
+    //     int p = parent_;
+    //     parent_ = 0;
+    //     return -p;
+    //   } else {
+    //     return 0;
+    //   }
   }
   // unlock can be done by set_parent or set_weight
 #endif
 private:
-  int parent_; // negative for root fragment
+#ifdef _OPENMP
+  std::atomic<int> parent_; // negative for root fragment, zero for locked root
+#else
+  int parent_;
+#endif
   int id_;
-};
-
-class node_c {
-public:
-  node_c() : parent_(1 ^ id_mask) {} // root node with weight = 1
-  ~node_c() {}
-  int is_root() const { return (int) parent_ <= 0; }
-  void set_parent(int parent) { parent_ = parent + 1; }
-  int parent() const { return parent_ - 1; }
-  void set_weight(int w) { parent_ = w ^ id_mask; }
-  int weight() const { return parent_ ^ id_mask; }
-  void set_id(int id) { parent_ = id ^ id_mask; }
-  int id() const { return parent_ ^ id_mask; }
-#ifdef CLUSTER_OPENMP
-  int lock_root() {
-    int p = parent_;
-    if (p < 0 && compare_and_swap(parent_, p, 0)) {
-      return -p;
-    } else {
-      return 0;
-    }
-  }
-  // unlock can be done by set_parent or set_weight
-#endif
-private:
-  static const int id_mask = -1;
-  int parent_; // non-positive for root fragment
 };
 
 class node_noweight {
 public:
   node_noweight() : parent_(id_mask) {} // root note with id = 0
-  ~node_noweight() {}
+#ifdef _OPENMP
+  node_noweight(const node_noweight& rhs) { parent_.store(rhs.parent_.load()); }
+  node_noweight& operator=(const node_noweight& rhs) {
+    parent_.store(rhs.parent_.load());
+    return *this;
+  }
+#else
+  // default copy constructor and assignment operator is fine
+#endif
   int is_root() const { return (int) parent_ <= 0; }
   void set_parent(int parent) { parent_ = parent + 1; }
   int parent() const { return parent_ - 1; }
@@ -106,20 +93,20 @@ public:
   int weight() const { return 0; } // dummy
   void set_id(int id) { parent_ = id ^ id_mask; }
   int id() const { return parent_ ^ id_mask; }
-#ifdef CLUSTER_OPENMP
+#ifdef _OPENMP
   int lock_root() {
     int p = parent_;
-    if (p < 0 && compare_and_swap(parent_, p, 0)) {
-      return 1;
-    } else {
-      return 0;
-    }
+    return (p < 0 && parent_.compare_exchange_weak(p, 0)) ? (-p) : 0;
   }
   // unlock can be done by set_parent, set_weight or set_id
 #endif
 private:
   static const int id_mask = -1;
-  int parent_; // negative for root fragment
+#ifdef _OPENMP
+  std::atomic<int> parent_; // negative for root fragment, zero for locked root
+#else
+  int parent_;
+#endif
 };
 
 // thread-unsafe
@@ -131,7 +118,7 @@ inline int add(std::vector<T>& v) {
 
 template<class T>
 inline int root_index(std::vector<T> const& v, int g) {
-#ifdef CLUSTER_OPENMP
+#ifdef _OPENMP
   T c = v[g];
   while (!c.is_root()) {
     g = c.parent();
@@ -174,7 +161,7 @@ inline int cluster_id(std::vector<T> const& v, T const& n) { return root(v, n).i
 
 template<class T>
 void set_root(std::vector<T>& v, int g) {
-#ifdef CLUSTER_OPENMP
+#ifdef _OPENMP
   while(true) {
     int r = root_index(v, g);
     if (r == g) {
@@ -231,7 +218,7 @@ inline int unify_pathhalving(std::vector<T>& v, int g0, int g1) {
   using std::swap;
   int r0 = root_index_ph(v, g0);
   int r1 = root_index_ph(v, g1);
-#ifdef CLUSTER_OPENMP
+#ifdef _OPENMP
   int w0 = 0;
   int w1 = 0;
   while (true) {
@@ -338,7 +325,7 @@ void copy_id_p(std::vector<T>& v, int start, int n) {
 
 template<typename T>
 inline void pack_tree(std::vector<T>& v, int n) {
-#ifdef CLUSTER_OPENMP
+#ifdef _OPENMP
   int g, w; // workaround for FCC OpenMP bug? -- ST 2010-11-22
   #pragma omp parallel for schedule(static) private(g, w)
   for (int i = 0; i < n; ++i) {
@@ -389,7 +376,7 @@ inline void pack_tree(std::vector<T>& v, int n) {
 // pack tree so that nodes with id [0...n) and [m...) come upper
 template<typename T>
 inline void pack_tree(std::vector<T>& v, int n, int m) {
-#ifdef CLUSTER_OPENMP
+#ifdef _OPENMP
   int g, w; // workaround for FCC OpenMP bug? -- ST 2010-11-22
   #pragma omp parallel for schedule(static) private(g, w)
   for (int i = 0; i < n; ++i) {
@@ -481,5 +468,3 @@ inline void pack_tree(std::vector<T>& v, int n, int m) {
 
 } // end namespace union_find
 } // end namespace cluster
-
-#endif
