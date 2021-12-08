@@ -1,6 +1,0 @@
-[submodule "tool/lattice"]
-	path = tool/lattice
-	url = https://github.com/todo-group/lattice.git
-[submodule "tool/standards"]
-	path = tool/standards
-	url = https://github.com/todo-group/standards.git
