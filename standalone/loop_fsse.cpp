@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
   std::vector<unsigned int> current(nsites); // id of fragments at current time
   std::vector<cluster_t> clusters;
 
-  // oservables
+  // observables
   standards::accumulator energy("Energy Density"), smag("Staggered Magnetizetion^2"),
     ssus("Staggered Susceptibility"), usus("Uniform Susceptibility");
 
